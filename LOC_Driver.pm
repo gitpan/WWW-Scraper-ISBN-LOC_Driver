@@ -9,7 +9,7 @@ use WWW::Scraper::ISBN::Driver;
 
 our @ISA = qw(WWW::Scraper::ISBN::Driver);
 
-our $VERSION = '0.19';
+our $VERSION = '0.20';
 
 sub search {
 	my $self = shift;
@@ -72,6 +72,7 @@ END
         $| = 1; #flush output
         
         if ($data) {
+		print $data->{'book_data'}."\n";
                 my $author = "";
                 my @author_lines;
                 my $other_authors;
@@ -79,29 +80,15 @@ END
                 my $edition = 'n/a';
                 my $volume = 'n/a';
                 print $data->{'book_data'} if ($self->verbosity > 1);
-                if ($data->{'book_data'} =~ /Author:\s+(.*)\n/) {
-                        $author = $1;
-                        $author =~ s/, \d+(?:-|-\d+)//;
+                while ($data->{'book_data'} =~ s/(?:Author:|Other authors:|\n\s+)\s+(.*), (?:\d+-(?:\d+)*)//) {
+			print "found: ".$1."\n";
+                        push @author_lines, $1;
                 }
-                if ($data->{'book_data'} =~ /Other authors:\s+((.*)\n(\s+(.*)\n)*)/){
-                        $other_authors = $author."\n".$1;
-                        @author_lines = split(/\n/,$other_authors);
-                        $other_authors = "";
-                        my $sep = "";
-                        foreach my $line(@author_lines) {
-                                $line =~ s/\d+(?:-|-\d+)//;
-                                $line =~ s/^[^A-Za-z]+//g;
-                                $line =~ s/\.//g;
-                        }
-                        @author_lines = sort @author_lines;
-                } else {
-                        @author_lines = ($author);
-                }
+                @author_lines = sort @author_lines;
                 foreach my $line(@author_lines) {
-                        $line =~ s/\s$//;
-                        $line =~ s/([A-Za-z]+), ([A-Za-z]+),?/$2 $1/;
+                        $line =~ s/(\w+), (.*)/$2 $1/;
                 }
-                $author = join ", ", @author_lines;
+                $author = join "|", @author_lines;
                                 
                 $data->{'book_data'} =~ /Title:\s+((.*)\n(\s+(.*)\n)*)/;
                 $title = $1;

@@ -1,5 +1,12 @@
 Revision history for Perl extension WWW::Scraper::ISBN::LOC_Driver.
 
+0.20 - 04/17/2004 - A. Schamp
+	Fixed problem with author return.  
+	Should work now, for most cases, at least.
+
+0.19 - ? - A. Schamp
+	Fixed random junk
+
 0.18 - 04/06/2004 - A. Schamp
 	Removed exporter and perl version stuff
 	by user request
