@@ -3,13 +3,12 @@ package WWW::Scraper::ISBN::LOC_Driver;
 use strict;
 use warnings;
 use HTTP::Request::Common;
-use Template::Extract;
 use LWP::UserAgent;
 use WWW::Scraper::ISBN::Driver;
 
 our @ISA = qw(WWW::Scraper::ISBN::Driver);
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 sub search {
 	my $self = shift;
