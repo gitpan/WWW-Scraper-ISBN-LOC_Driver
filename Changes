@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::Scraper::ISBN::LOC_Driver.
 
+0.18 - 04/06/2004 - A. Schamp
+	Removed exporter and perl version stuff
+	by user request
+
 0.17 - 04/03/2004 - A. Schamp
 	Misc. cleanup
 

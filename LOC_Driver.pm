@@ -1,6 +1,5 @@
 package WWW::Scraper::ISBN::LOC_Driver;
 
-use 5.008;
 use strict;
 use warnings;
 use HTTP::Request::Common;
@@ -8,28 +7,9 @@ use Template::Extract;
 use LWP::UserAgent;
 use WWW::Scraper::ISBN::Driver;
 
-require Exporter;
-
 our @ISA = qw(WWW::Scraper::ISBN::Driver);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration	use WWW::Scraper::ISBN::LOC_Driver ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-our %EXPORT_TAGS = ( 'all' => [ qw(
-	
-) ] );
-
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
-
-our @EXPORT = qw(
-	
-);
-
-our $VERSION = '0.17';
+our $VERSION = '0.18';
 
 sub search {
 	my $self = shift;
