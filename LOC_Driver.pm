@@ -9,7 +9,7 @@ use WWW::Scraper::ISBN::Driver;
 
 our @ISA = qw(WWW::Scraper::ISBN::Driver);
 
-our $VERSION = '0.18';
+our $VERSION = '0.19';
 
 sub search {
 	my $self = shift;
@@ -182,7 +182,15 @@ None by default.
 
 =item C<search()>
 
-Starts a session, and then passes the appropriate form fields to the LOC's page.
+Starts a session, and then passes the appropriate form fields to the LOC's 
+page.  If a valid result is returned, the following fields are available 
+via the book hash:
+
+  isbn
+  author
+  title
+  edition
+  volume
 
 =back
 
