@@ -6,7 +6,6 @@ WriteMakefile(
     'VERSION_FROM'	=> 'LOC_Driver.pm', # finds $VERSION
     'PREREQ_PM'		=> {
 			HTTP::Request::Common => 1.19,
-			Template::Extract => 0.35,
 			LWP::UserAgent => 2.0,
 			WWW::Scraper::ISBN::Driver => 0.15
 			}, # e.g., Module::Name => 1.1

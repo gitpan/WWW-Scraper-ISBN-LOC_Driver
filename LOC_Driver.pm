@@ -9,7 +9,7 @@ use WWW::Scraper::ISBN::Driver;
 
 our @ISA = qw(WWW::Scraper::ISBN::Driver);
 
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 sub search {
 	my $self = shift;
@@ -27,26 +27,16 @@ sub search {
         $doc = join "\n", grep { /\S/ } split /\n/, $res->as_string();
         $doc =~ s/\r//g;  
         $doc =~ s/^\s+//g;
-        
-        my $x = Template::Extract->new;
 
-        my $template = <<END;
-<INPUT NAME="SESSION_ID" VALUE="
-        [% session_id %]
-" TYPE="HIDDEN">
-[% ... %]
-END
-        my $data = $x->extract($template, $doc);
-        my $sessionID = "";
-        
-        if ($data) {
-                $sessionID = $data->{'session_id'};
-        } else {
+	my $sessionID = "";
+
+	unless ( ($sessionID) = ($doc =~ /<INPUT NAME="SESSION_ID" VALUE="([^"]*)" TYPE="HIDDEN">/i) ) {
 		print "Error starting LOC Query session.\n" if $self->verbosity;
 		$self->error("Cannot start LOC query session.\n");
 		$self->found(0);
                 return 0;
         }
+
         $post_url = "http://lcweb.loc.gov/cgi-bin/zgate";
         $res = $ua->request(POST $post_url, Referer => $post_url, Content => [ TERM_1 => $isbn, USE_1 => '7', ESNAME => 'F', ACTION => 'SEARCH', DBNAME => 'VOYAGER', MAXRECORDS => '20', RECSYNTAX => '1.2.840.10003.5.10', STRUCT_3 => '1', SESSION_ID => $sessionID]);
         
@@ -57,49 +47,36 @@ END
         $doc = join "\n", grep { /\S/ } split /\n/, $res->as_string();
         $doc =~ s/\r//g;  
         $doc =~ s/^\s+//g;
-        $x = Template::Extract->new;
 
-        $template = <<END;
-<PRE>
-        [% book_data %]
-</PRE>
-[% ... %]
-END
-        
-        $data = $x->extract($template, $doc);
-        
-                
-        $| = 1; #flush output
-        
-        if ($data) {
-		print $data->{'book_data'}."\n";
+	if ( (my $book_data) = ($doc =~ /.*<PRE>(.*)<\/PRE>.*/is) ) {
                 my $author = "";
                 my @author_lines;
                 my $other_authors;
                 my $title;
                 my $edition = 'n/a';
                 my $volume = 'n/a';
-                print $data->{'book_data'} if ($self->verbosity > 1);
-                while ($data->{'book_data'} =~ s/(?:Author:|Other authors:|\n\s+)\s+(.*), (?:\d+-(?:\d+)*)//) {
-			print "found: ".$1."\n";
-                        push @author_lines, $1;
+                print $book_data if ($self->verbosity > 1);
+                while ($book_data =~ s/uthor(s)?:\s+(\D+?)(?:, [0-9-.]*|\.)$/if (($1) && ($1 eq "s")) { "uthors:"; } else { "" }/me) { 
+			my $temp = $2;
+			$temp =~ s/ ([A-Z])$/ $1./; # trailing middle initial
+                        push @author_lines, $temp;
                 }
                 @author_lines = sort @author_lines;
                 foreach my $line(@author_lines) {
                         $line =~ s/(\w+), (.*)/$2 $1/;
                 }
-                $author = join "|", @author_lines;
+                $author = join ", ", @author_lines;
                                 
-                $data->{'book_data'} =~ /Title:\s+((.*)\n(\s+(.*)\n)*)/;
+                $book_data =~ /Title:\s+((.*)\n(\s+(.*)\n)*)/;
                 $title = $1;
                 $title =~ s/\n//g;
                 $title =~ s/ +/ /g;
                 $title =~ s/(.*) \/(.*)/$1/;
                 print "title: $title\n" if ($self->verbosity > 1);;
-                if ($data->{'book_data'} =~ /Edition:\s+(.*)\n/) {
+                if ($book_data =~ /Edition:\s+(.*)\n/) {
 			$edition = $1;
 		} 
-		if ($data->{'book_data'} =~ /Volume:\s+(.*)\n/) {
+		if ($book_data =~ /Volume:\s+(.*)\n/) {
 			$volume = $1;
 		}
 		print "author: $author\n" if ($self->verbosity > 1);
