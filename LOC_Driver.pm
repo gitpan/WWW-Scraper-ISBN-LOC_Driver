@@ -29,7 +29,7 @@ our @EXPORT = qw(
 	
 );
 
-our $VERSION = '0.15';
+our $VERSION = '0.17';
 
 sub search {
 	my $self = shift;
@@ -166,17 +166,25 @@ WWW::Scraper::ISBN::LOC_Driver - Searches Library of Congress's online catalog f
 
 =head1 SYNOPSIS
 
-See parent class documentation (WWW::Scraper::ISBN::Driver)
+See parent class documentation (L<WWW::Scraper::ISBN::Driver>)
 
 =head1 REQUIRES
 
 Requires the following modules be installed:
 
-WWW::Scraper::ISBN::Driver
-Carp 
-HTTP::Request::Common 
-LWP::UserAgent 
-Template::Extract
+=over 4
+
+=item L<WWW::Scraper::ISBN::Driver>
+
+=item L<Carp>
+
+=item L<HTTP::Request::Common>
+
+=item L<LWP::UserAgent>
+
+=item L<Template::Extract>
+
+=back
 
 =head1 DESCRIPTION
 
@@ -190,21 +198,31 @@ None by default.
 
 =head1 METHODS
 
-=head2 search()
+=over 4
+
+=item C<search()>
 
 Starts a session, and then passes the appropriate form fields to the LOC's page.
 
+=back
+
 =head1 SEE ALSO
 
-WWW::Scraper::ISBN
-WWW::Scraper::ISBN::Record
-WWW::Scraper::ISBN::Driver
+=over 4
 
-No mailing list or website currently available.  Primary development done through CSX [http://csx.calvin.edu/]
+=item L<WWW::Scraper::ISBN>
+
+=item L<WWW::Scraper::ISBN::Record>
+
+=item L<WWW::Scraper::ISBN::Driver>
+
+=back
+
+No mailing list or website currently available.  Primary development done through CSX ( L<http://csx.calvin.edu/> )
 
 =head1 AUTHOR
 
-Andy Schamp, E<lt>ams5@calvin.edu<gt>
+Andy Schamp, E<lt>andy@schamp.netE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

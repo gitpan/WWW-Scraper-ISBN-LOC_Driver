@@ -1,6 +1,8 @@
 Revision history for Perl extension WWW::Scraper::ISBN::LOC_Driver.
 
-0.01  Mon Mar 22 16:33:07 2004
-	- original version; created by h2xs 1.22 with options
-		-AX -n WWW::Scraper::ISBN::LOC_Driver
+0.17 - 04/03/2004 - A. Schamp
+	Misc. cleanup
 
+0.16 - 03/30/2004 - A. Schamp
+	Began using Changes file
+	Cleaned up some documentation

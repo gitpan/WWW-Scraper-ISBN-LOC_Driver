@@ -1,16 +1,9 @@
 WWW/Scraper/ISBN/LOC_Driver version 0.01
 ========================================
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+WWW::Scraper::ISBN::LOC_Driver - Searches Library of Congress's online catalog for book information.
 
-A README file is required for CPAN modules since CPAN extracts the
-README file from a module distribution so that people browsing the
-archive can use it get an idea of the modules uses. It is usually a
-good idea to provide version information here so that people can
-decide whether fixes for the module are worth downloading.
+See parent class documentation (WWW::Scraper::ISBN::Driver)
 
 INSTALLATION
 
@@ -25,7 +18,11 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  blah blah blah
+   WWW::Scraper::ISBN::Driver
+   Carp
+   HTTP::Request::Common
+   LWP::UserAgent
+   Template::Extract
 
 COPYRIGHT AND LICENCE
 
