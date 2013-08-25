@@ -1,23 +1,35 @@
-Revision history for Perl extension WWW::Scraper::ISBN::LOC_Driver.
+Revision history for WWW::Scraper::ISBN::LOC_Driver
+===================================================
 
-0.21 - 04/17/2004 - A. Schamp
-	Fixed the rest of the author problems, removed the
-	Template::Extract dependency
+0.23    2013-08-25
+        - New Maintainer: Barbie.
+        - move module into lib directory structure.
+        - change file dates changed to meet W3CDTF standards.
+        - reworked Makefile.PL for clarity.
+        - added META.json and updated META.yml.
+        - extended test suite.
+        - documentation updates.
 
-0.20 - 04/17/2004 - A. Schamp
-	Fixed problem with author return.  
-	Should work now, for most cases, at least.
+0.22    2004-04-19
+        - further removed Template::Extract.
 
-0.19 - ? - A. Schamp
-	Fixed random junk
+0.21    2004-04-17
+	    - Fixed the rest of the author problems, removed the Template::Extract
+          dependency
 
-0.18 - 04/06/2004 - A. Schamp
-	Removed exporter and perl version stuff
-	by user request
+0.20    2004-04-17
+	    - Fixed problem with author return. Should work now, for most cases, 
+          at least.
 
-0.17 - 04/03/2004 - A. Schamp
-	Misc. cleanup
+0.19    2004-04-13
+	    - Fixed random junk
 
-0.16 - 03/30/2004 - A. Schamp
-	Began using Changes file
-	Cleaned up some documentation
+0.18    2004-04-06
+	    - Removed exporter and perl version stuff by user request
+
+0.17    2004-04-03
+	    - Misc. cleanup
+
+0.16    2004-03-30
+	    - Began using Changes file
+	    - Cleaned up some documentation

@@ -1,5 +1,5 @@
-WWW/Scraper/ISBN/LOC_Driver version 0.01
-========================================
+WWW-Scraper-ISBN-LOC_Driver
+===========================
 
 WWW::Scraper::ISBN::LOC_Driver - Searches Library of Congress's online catalog for book information.
 
@@ -19,17 +19,13 @@ DEPENDENCIES
 This module requires these other modules and libraries:
 
    WWW::Scraper::ISBN::Driver
-   Carp
    HTTP::Request::Common
    LWP::UserAgent
-   Template::Extract
 
 COPYRIGHT AND LICENCE
 
-Put the correct copyright and licence information here.
+  Copyright (C) 2004-2013 Andy Schamp, andy@schamp.net
+  Copyright (C) 2013      Barbie, barbie@cpan.org
 
-Copyright (C) 2004 root
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself. 
-
+  This distribution is free software; you can redistribute it and/or
+  modify it under the Artistic Licence v2.
