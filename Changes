@@ -1,6 +1,9 @@
 Revision history for WWW::Scraper::ISBN::LOC_Driver
 ===================================================
 
+0.24    2014-03-29
+        - added LICENSE file.
+
 0.23    2013-08-25
         - New Maintainer: Barbie.
         - move module into lib directory structure.

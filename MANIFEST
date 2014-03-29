@@ -1,5 +1,6 @@
 Changes
 lib/WWW/Scraper/ISBN/LOC_Driver.pm
+LICENSE
 Makefile.PL
 MANIFEST
 META.json
