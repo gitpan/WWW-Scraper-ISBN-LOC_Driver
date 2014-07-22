@@ -3,114 +3,142 @@ package WWW::Scraper::ISBN::LOC_Driver;
 use strict;
 use warnings;
 
+our $VERSION = '0.25';
+
+#--------------------------------------------------------------------------
+
+###########################################################################
+# Inheritence
+
+our @ISA = qw(WWW::Scraper::ISBN::Driver);
+
+###########################################################################
+# Modules
+
 use HTTP::Request::Common;
 use LWP::UserAgent;
 use WWW::Scraper::ISBN::Driver;
 
-our @ISA = qw(WWW::Scraper::ISBN::Driver);
-
-our $VERSION = '0.24';
+###########################################################################
+# Public Interface
 
 sub search {
-	my $self = shift;
-	my $isbn = shift;
-	$self->found(0);
-	$self->book(undef);
+    my $self = shift;
+    my $isbn = shift;
+    my %data;
+
+    $self->found(0);
+    $self->book(undef);
 
     # first, initialize the session:
-    my $post_url = "http://lcweb.loc.gov/cgi-bin/zgate?ACTION=INIT&FORM_HOST_PORT=/prod/www/data/z3950/locils.html,z3950.loc.gov,7090";
+    my $post_url = "http://www.loc.gov/cgi-bin/zgate?ACTION=INIT&FORM_HOST_PORT=/prod/www/data/z3950/locils.html,z3950.loc.gov,7090";
     my $ua = new LWP::UserAgent;
     my $res = $ua->request(GET $post_url);
-    my $doc = "";
-        
+    my $doc = '';
+
     # get page
     # removes blank lines, DOS line feeds, and leading spaces.
     $doc = join "\n", grep { /\S/ } split /\n/, $res->as_string();
-    $doc =~ s/\r//g;  
+    $doc =~ s/\r//g;
     $doc =~ s/^\s+//g;
 
-	my $sessionID = "";
+    my $sessionID = '';
 
-	unless ( ($sessionID) = ($doc =~ /<INPUT NAME="SESSION_ID" VALUE="([^"]*)" TYPE="HIDDEN">/i) ) {
-		print "Error starting LOC Query session.\n" if $self->verbosity;
-		$self->error("Cannot start LOC query session.\n");
-		$self->found(0);
+    unless ( ($sessionID) = ($doc =~ /<INPUT NAME="SESSION_ID" VALUE="([^"]*)" TYPE="HIDDEN">/i) ) {
+        print "Error starting LOC Query session.\n" if $self->verbosity;
+        $self->error("Cannot start LOC query session.\n");
+        $self->found(0);
         return 0;
     }
 
-    $post_url = "http://lcweb.loc.gov/cgi-bin/zgate";
+    $post_url = "http://www.loc.gov/cgi-bin/zgate";
     $res = $ua->request(
-        POST $post_url, 
-        Referer => $post_url, 
-        Content => [ 
-            TERM_1      => $isbn, 
-            USE_1       => '7', 
-            ESNAME      => 'F', 
-            ACTION      => 'SEARCH', 
-            DBNAME      => 'VOYAGER', 
-            MAXRECORDS  => '20', 
-            RECSYNTAX   => '1.2.840.10003.5.10', 
-            STRUCT_3    => '1', 
+        POST $post_url,
+        Referer => $post_url,
+        Content => [
+            TERM_1      => $isbn,
+            USE_1       => '7',
+            ESNAME      => 'F',
+            ACTION      => 'SEARCH',
+            DBNAME      => 'VOYAGER',
+            MAXRECORDS  => '20',
+            RECSYNTAX   => '1.2.840.10003.5.10',
+            STRUCT_1    => '1',
+            STRUCT_2    => '1',
+            STRUCT_3    => '1',
             SESSION_ID  => $sessionID
         ]
     );
-        
-    $doc = "";
-        
+
+    $doc = '';
+
     # get page
     # removes blank lines, DOS line feeds, and leading spaces.
     $doc = join "\n", grep { /\S/ } split /\n/, $res->as_string();
-    $doc =~ s/\r//g;  
+    $doc =~ s/\r//g;
     $doc =~ s/^\s+//g;
 
-	if ( (my $book_data) = ($doc =~ /.*<PRE>(.*)<\/PRE>.*/is) ) {
-        my $author = "";
-        my @author_lines;
-        my $other_authors;
-        my $title;
-        my $edition = 'n/a';
-        my $volume = 'n/a';
+    if ( (my $book_data) = ($doc =~ /.*<PRE>(.*)<\/PRE>.*/is) ) {
         print $book_data if ($self->verbosity > 1);
 
-        while ($book_data =~ s/uthor(s)?:\s+(\D+?)(?:, [0-9-.]*|\.)$/if (($1) && ($1 eq "s")) { "uthors:"; } else { "" }/me) { 
-			my $temp = $2;
-			$temp =~ s/ ([A-Z])$/ $1./; # trailing middle initial
+        my @author_lines;
+        my $other_authors;
+
+        # get author field
+        while ($book_data =~ s/uthor(s)?:\s+(\D+?)(?:, [0-9-.]*|\.)$/if (($1) && ($1 eq "s")) { "uthors:"; } else { "" }/me) {
+            my $temp = $2;
+            $temp =~ s/ ([A-Z])$/ $1./; # trailing middle initial
             push @author_lines, $temp;
         }
-        
+
         @author_lines = sort @author_lines;
         foreach my $line(@author_lines) {
             $line =~ s/(\w+), (.*)/$2 $1/;
         }
-        $author = join ", ", @author_lines;
-                                
-        $book_data =~ /Title:\s+((.*)\n(\s+(.*)\n)*)/;
-        $title = $1;
-        $title =~ s/\n//g;
-        $title =~ s/ +/ /g;
-        $title =~ s/(.*) \/(.*)/$1/;
-        print "title: $title\n" if ($self->verbosity > 1);;
-        
-        if ($book_data =~ /Edition:\s+(.*)\n/) {
-			$edition = $1;
-		} 
-		if ($book_data =~ /Volume:\s+(.*)\n/) {
-			$volume = $1;
-		}
-		
-        print "author: $author\n"   if ($self->verbosity > 1);
-        print "edition: $edition\n" if ($self->verbosity > 1);
-        print "volume: $volume\n"   if ($self->verbosity > 1);
-        
+        $data{author} = join ", ", @author_lines;
+
+        # get other fields
+        ($data{title})                      = $book_data =~ /Title:\s+((.*)\n(\s+(.*)\n)*)/;
+        ($data{edition})                    = $book_data =~ /Edition:\s+(.*)\n/;
+        ($data{volume})                     = $book_data =~ /Volume:\s+(.*)\n/;
+        ($data{dewey})                      = $book_data =~ /Dewey No.:\s+(.*)\n/;
+        ($data{publisher},$data{pubdate})   = $book_data =~ /Published:\s+[^:]+:\s+(.*), c(\d+)\.\n/;
+        ($data{pages},$data{height})        = $book_data =~ /Description:\s+\w+,\s+(\d+)\s+:[^;]+;\s+(\d+)\s*cm.\n/;
+        ($data{isbn10},$data{binding})      = $book_data =~ /ISBN:\s+(\d+)\s+\(([^\)]+)\)\n/;
+
+        # trim and clean data
+        for my $key (keys %data) {
+            next    unless($data{$key});
+            $data{$key} =~ s/\n//g;
+            $data{$key} =~ s/ +/ /g;
+        }
+
+        # reformat and default fields
+        $data{title} =~ s/(.*) \/(.*)/$1/;
+        $data{height} *= 10;    # cm => mm
+        $data{author}  ||= '';
+        $data{edition} ||= 'n/a';
+        $data{volume}  ||= 'n/a';
+
+        # print data if in verbose mode
+        if($self->verbosity > 1) {
+            for my $key (keys %data) {
+                printf "%-8s %s\n", "$key:", $data{$key};
+            }
+        }
+
+        # store book data
         my $bk = {
             'isbn'      => $isbn,
-            'author'    => $author,
-            'title'     => $title,
-            'edition'   => $edition,
-            'volume'    => $volume
+            'isbn13'    => $isbn,
+            'ean13'     => $isbn
         };
-		$self->book($bk);
-		$self->found(1);
+
+        $bk->{isbn10} = $data{isbn10} if(length($data{isbn10}) == 10);
+        $bk->{$_} = $data{$_} for(qw(author title edition volume dewey publisher pubdate pages height binding));
+
+        $self->book($bk);
+        $self->found(1);
         return $self->book;
 
     } else {
@@ -149,10 +177,10 @@ Requires the following modules be installed:
 
 =head1 DESCRIPTION
 
-Searches for book information from the Library of Congress's online catalog.  
-May be slower than most drivers, because it must first create a session and 
-grab a session ID before perforiming a search.  This payoff may be worth it, if 
-the catalog is more comprehensive than others, but it may not.  Use your best 
+Searches for book information from the Library of Congress's online catalog.
+May be slower than most drivers, because it must first create a session and
+grab a session ID before perforiming a search. This payoff may be worth it, if
+the catalog is more comprehensive than others, but it may not. Use your best
 judgment.
 
 =head1 METHODS
@@ -161,15 +189,24 @@ judgment.
 
 =item C<search()>
 
-Starts a session, and then passes the appropriate form fields to the LOC's 
-page.  If a valid result is returned, the following fields are available 
+Starts a session, and then passes the appropriate form fields to the LOC's
+page.  If a valid result is returned, the following fields are available
 via the book hash:
 
-  isbn
-  author
+  isbn          (now returns isbn13)
+  isbn10
+  isbn13
+  ean13         (industry name)
   title
+  author
   edition
   volume
+  dewey
+  publisher
+  pubdate
+  binding       (if known)
+  pages         (if known)
+  height        (if known) (in millimetres)
 
 =back
 
