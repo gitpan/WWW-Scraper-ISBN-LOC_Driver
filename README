@@ -1,7 +1,7 @@
 WWW-Scraper-ISBN-LOC_Driver
 ===========================
 
-WWW::Scraper::ISBN::LOC_Driver - Searches Library of Congress's online catalog for book information.
+WWW::Scraper::ISBN::LOC_Driver - Search driver for the Library of Congress' online catalog for book information
 
 See parent class documentation (WWW::Scraper::ISBN::Driver)
 

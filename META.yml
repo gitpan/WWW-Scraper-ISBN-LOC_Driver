@@ -1,7 +1,7 @@
 --- #YAML:1.0
 name:                     WWW-Scraper-ISBN-LOC_Driver
-version:                  0.25
-abstract:                 Searches Library of Congress' online catalog for book information
+version:                  0.26
+abstract:                 Search driver for the Library of Congress' online catalog for book information
 author:
   - Andy Schamp <andy@schamp.net>
   - Barbie <barbie@cpan.org>
@@ -29,7 +29,7 @@ build_requires:
 provides:
   WWW::Scraper::ISBN::LOC_Driver:
     file:     lib/WWW/Scraper/ISBN/LOC_Driver.pm
-    version:  0.25
+    version:  0.26
 
 no_index:
   directory:
@@ -44,4 +44,4 @@ resources:
 meta-spec:
    version:   1.4
    url:       http://module-build.sourceforge.net/META-spec-v1.4.html
-generated_by: Hand 1.0
+generated_by: The Hand of Barbie 1.0

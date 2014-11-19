@@ -3,7 +3,7 @@ package WWW::Scraper::ISBN::LOC_Driver;
 use strict;
 use warnings;
 
-our $VERSION = '0.25';
+our $VERSION = '0.26';
 
 #--------------------------------------------------------------------------
 
@@ -155,7 +155,7 @@ __END__
 
 =head1 NAME
 
-WWW::Scraper::ISBN::LOC_Driver - Searches Library of Congress's online catalog for book information.
+WWW::Scraper::ISBN::LOC_Driver - Search driver for the Library of Congress' online catalog for book information
 
 =head1 SYNOPSIS
 
